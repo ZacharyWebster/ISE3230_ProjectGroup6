@@ -5,7 +5,7 @@ from shapely.geometry import Point
 
 # Read your already geocoded CSV
 # Change path as needed for your computer 
-df = pd.read_csv('C:\Users\zweb3\OneDrive\Documents\ISE-3230\distinct_Address_License.csv')
+df = pd.read_csv(r'C:\Users\zweb3\OneDrive\Documents\ISE-3230\distinct_Address_License.csv')
 
 # Remove any rows without coordinates
 df = df.dropna(subset=['latitude', 'longitude'])
