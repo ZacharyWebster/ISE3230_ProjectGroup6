@@ -4,7 +4,8 @@ from geopy.geocoders import Nominatim
 from shapely.geometry import Point
 
 # Read your already geocoded CSV
-df = pd.read_csv('addresses_with_coordinates.csv')
+# Change path as needed for your computer 
+df = pd.read_csv('C:\Users\zweb3\OneDrive\Documents\ISE-3230.csv')
 
 # Remove any rows without coordinates
 df = df.dropna(subset=['latitude', 'longitude'])
