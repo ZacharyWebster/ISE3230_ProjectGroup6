@@ -1,34 +1,60 @@
 import pandas as pd
-import geopandas as gpd
 from geopy.geocoders import Nominatim
-from shapely.geometry import Point
+import time
 
-# Read your already geocoded CSV
-# Change path as needed for your computer 
+# Read your CSV file
 df = pd.read_csv(r'C:\Users\zweb3\OneDrive\Documents\ISE-3230\distinct_Address_License.csv')
 
-# Remove any rows without coordinates
-df = df.dropna(subset=['latitude', 'longitude'])
+print(f"Loaded {len(df)} addresses")
+print(f"Columns in your CSV: {list(df.columns)}")
 
-# Create geometry column from lat/lon
-geometry = [Point(lon, lat) for lon, lat in zip(df['longitude'], df['latitude'])]
+# Initialize geocoder
+geolocator = Nominatim(user_agent="facility_geocoder_v1")
 
-# Create GeoDataFrame
-gdf = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
+def geocode_address(row):
+    try:
+        # Use the actual column names from your CSV
+        full_address = f"{row['site_address']}, {row['city']}, Ohio, USA"
+        location = geolocator.geocode(full_address)
+        
+        if location:
+            print(f"✓ Geocoded: {row['site_address']}")
+            return location.latitude, location.longitude
+        else:
+            print(f"✗ Failed: {row['site_address']}")
+            return None, None
+    except Exception as e:
+        print(f"✗ Error: {row['site_address']} - {e}")
+        return None, None
 
-print(f"Created GeoDataFrame with {len(gdf)} locations")
+# Add coordinate columns (they don't exist yet)
+df['latitude'] = None
+df['longitude'] = None
 
-# Save as GeoJSON for mapping
-gdf.to_file("facilities.geojson", driver='GeoJSON')
-print("Saved as 'facilities.geojson'")
+print("Starting geocoding...")
 
-# You can also save as shapefile
-gdf.to_file("facilities.shp")
-print("Saved as 'facilities.shp'")
+# Geocode each address
+for index, row in df.iterrows():
+    lat, lon = geocode_address(row)
+    df.at[index, 'latitude'] = lat
+    df.at[index, 'longitude'] = lon
+    time.sleep(1.1)  # Rate limiting
 
-# Quick plot (if you have matplotlib)
-import matplotlib.pyplot as plt
-gdf.plot(markersize=5, figsize=(10, 8))
-plt.title("Facility Locations")
-plt.savefig('facilities_map.png')
-print("Saved map as 'facilities_map.png'")
+print("Geocoding complete!")
+
+# NOW you can drop rows where geocoding failed
+df_clean = df.dropna(subset=['latitude', 'longitude'])
+
+print(f"Successfully geocoded: {len(df_clean)}/{len(df)} addresses")
+
+# Save both full results and clean results
+df.to_csv('all_addresses_with_coordinates.csv', index=False)
+df_clean.to_csv('successfully_geocoded_addresses.csv', index=False)
+
+print("Saved results:")
+print(f"- all_addresses_with_coordinates.csv (all addresses)")
+print(f"- successfully_geocoded_addresses.csv (only successful geocodes)")
+
+# Show sample of results
+print("\nSample of successfully geocoded addresses:")
+print(df_clean[['site_address', 'city', 'latitude', 'longitude']].head(10))
