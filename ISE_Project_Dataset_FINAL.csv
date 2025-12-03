@@ -1,4 +1,4 @@
-Facility ID,Name,City,Site Address,Class 1,# of Attempts,# of Pos Buys,Most Recent was pos,Had AC,In Appeal,Days Since Last Attempt,Priorty,Can Visit
+Facility ID,Name,City,Site Address,Work Area,# of Attempts,# of Pos Buys,Most Recent was pos,Had AC,In Appeal,Days Since Last Attempt,Priorty,Can Visit
 1,14-0 EXPRESS,COLUMBUS,355 E HUDSON ST,8,3,1,0,0,0,23,1,1
 2,154 HAGUE FOOD MART,COLUMBUS,154 N HAGUE AVE,10,3,0,0,0,0,26,1,1
 3,3 C FOOD MART,COLUMBUS,3725 KARL RD,6,4,0,0,0,0,3,1,0
