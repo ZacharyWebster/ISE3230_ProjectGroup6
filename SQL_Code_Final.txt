@@ -1,0 +1,41 @@
+--Create the data base
+
+	CREATE TABLE StorePriority (
+	    facilityID INT NOT NULL,
+	    name VARCHAR(50),
+	    city VARCHAR(50),
+ 	    siteAddress VARCHAR(50) NOT NULL,
+ 	    workArea INT,
+  	    numAttempts INT,
+ 	    numPosBuys INT,
+ 	    mostRecentPos INT,
+ 	    hadAC INT,
+	    inAppeal INT,
+  	    daysSinceLastAttempt INT,
+	    priority INT,
+ 	    canVisit INT,
+ 	    PRIMARY KEY (facilityID)
+	);
+
+	CREATE TABLE Lat_Long (
+	    name VARCHAR(50),
+	    siteAddress VARCHAR(50) NOT NULL,
+ 	    city VARCHAR(50),
+  	    latitude REAL,
+ 	    longitude REAL,
+ 	    PRIMARY KEY (name, siteAddress)
+	);
+
+-- Figure out which work area to go to
+
+	select count(workArea), sum(priority)/sqrt(count(workArea)), sum(canVisit)
+	from StorePriority
+	group by workArea
+	order by sum(priority)/sqrt(count(workArea));
+
+-- From phase 2, figure out the latitude and longitude of the 20 facilities
+
+	select facilityID, latitude, longitude
+	from Lat_Long, StorePriority
+	where Lat_long.siteAddress = StorePriority.siteAddress AND facilityID in 	(24,50,113,142,177,213,216,219,230,294,319,340,345,347,399,408,415,484,503,773);
+
